@@ -47,7 +47,7 @@ class DiscountCodeTwigExtension extends AbstractExtension {
       /** @var \Drupal\node\Entity\Node $node */
       $node = reset($nodes);
       if ($node->hasField($field_name)) {
-        return $node->get($field_name)->value; // Adjust this if the field is a complex field.
+        return $node->get($field_name)->getValue();
       }
     }
 
