@@ -1,0 +1,5 @@
+services:
+  radlobby_discount_code.twig_extension:
+    class: Drupal\radlobby_discount_code\Twig\RadlobbyDiscountCodeTwigExtension
+    tags:
+      - { name: twig.extension }

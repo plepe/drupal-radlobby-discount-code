@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\discount_code\Twig;
+namespace Drupal\radlobby_discount_code\Twig;
 
 use Drupal\node\Entity\Node;
 use Twig\Extension\AbstractExtension;
@@ -9,14 +9,14 @@ use Twig\TwigFunction;
 /**
  * Defines a custom Twig extension for discount codes.
  */
-class DiscountCodeTwigExtension extends AbstractExtension {
+class RadlobbyDiscountCodeTwigExtension extends AbstractExtension {
 
   /**
    * {@inheritdoc}
    */
   public function getFunctions() {
     return [
-      new TwigFunction('discount_code_value', [$this, 'getDiscountCodeValue']),
+      new TwigFunction('radlobby_discount_code_value', [$this, 'getDiscountCodeValue']),
     ];
   }
 

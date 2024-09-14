@@ -1,7 +1,0 @@
-name: 'Discount Code'
-type: module
-description: 'Defines a Twig function to get field values from nodes by title for discount codes.'
-core_version_requirement: ^10
-package: Custom
-dependencies:
-  - drupal:node
