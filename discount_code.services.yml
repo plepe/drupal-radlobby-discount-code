@@ -1,0 +1,5 @@
+services:
+  discount_code.twig_extension:
+    class: Drupal\discount_code\Twig\DiscountCodeTwigExtension
+    tags:
+      - { name: twig.extension }
