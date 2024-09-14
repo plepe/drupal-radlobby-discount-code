@@ -32,6 +32,10 @@ class DiscountCodeTwigExtension extends AbstractExtension {
    *   The value of the field or NULL if not found.
    */
   public function getDiscountCodeValue($title, $field_name) {
+    if (!$title) {
+      return NULL;
+    }
+
     // Load nodes with the given title.
     $nodes = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties(['title' => $title]);
 
