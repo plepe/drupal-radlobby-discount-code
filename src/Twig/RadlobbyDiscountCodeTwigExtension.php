@@ -26,11 +26,18 @@ class RadlobbyDiscountCodeTwigExtension extends AbstractExtension {
    *
    * @param string $title
    *   The title of the discount code (which matches the title of the Node).
+   * @param int $created
+   *   The timestamp when the form was created (so that discount code is stil valid, when the form
+   *   gets modified.
    *
    * @return int|null
    *   The Node ID of a valid discount code or null.
    */
-  public function getDiscountCode(string $title) {
+  public function getDiscountCode(string $title, int $created) {
+    // convert 'created' to RFC8601 value.
+    // If field_zeitraum is a field with date only use 'Y-m-d', otherwise 'Y-m-d\TH:i:s'.
+    $timestamp = date('Y-m-d', $created);
+
     // Load nodes with the given title.
     $nodes = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
       'title' => $title,
@@ -38,11 +45,14 @@ class RadlobbyDiscountCodeTwigExtension extends AbstractExtension {
       'status' => true, // Only published content
     ]);
 
-    // If a node is found, return the field value.
-    if (!empty($nodes)) {
-      /** @var \Drupal\node\Entity\Node $node */
-      $node = reset($nodes);
-      return $node->id();
+    // search for a node where the timestamp is between start/end of field_zeitraum (which is a datetime range field)
+    foreach ($nodes as $node) {
+      $values = $node->get('field_zeitraum')->getValue();
+      foreach ($values as $value) {
+        if ($value['value'] <= $timestamp && $timestamp <= $value['end_value']) {
+          return $node->id();
+        }
+      }
     }
 
     return NULL; // Return NULL if no node or field found.
