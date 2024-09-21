@@ -30,11 +30,13 @@ class RadlobbyDiscountCodeTwigExtension extends AbstractExtension {
    * @param int $created
    *   The timestamp when the form was created (so that discount code is stil valid, when the form
    *   gets modified.
+   * @param int $bundesland
+   *   Check if the discount code is valid for the selected bundesland (group id).
    *
    * @return int|null
    *   The Node ID of a valid discount code or null.
    */
-  public function getDiscountCode(string $title, int $created) {
+  public function getDiscountCode(string $title, int $created, int|null $bundesland) {
     // convert 'created' to RFC8601 value.
     // If field_zeitraum is a field with date only use 'Y-m-d', otherwise 'Y-m-d\TH:i:s'.
     $timestamp = date('Y-m-d', $created);
@@ -47,6 +49,7 @@ class RadlobbyDiscountCodeTwigExtension extends AbstractExtension {
       ->condition('status', true) // Only published content
       ->condition('field_zeitraum.value', $timestamp, '<=') // check if timestamp is between field_zeitraum
       ->condition('field_zeitraum.end_value', $timestamp, '>=') // see above
+      ->condition('field_bundeslaender', $bundesland) // Check bundesland
     ;
 
     // Execute the query and get the result.
