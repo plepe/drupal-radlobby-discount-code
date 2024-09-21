@@ -35,6 +35,7 @@ class RadlobbyDiscountCodeTwigExtension extends AbstractExtension {
     $nodes = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
       'title' => $title,
       'type' => 'discount_code', // Filter by content type 'discount_code'
+      'status' => true, // Only published content
     ]);
 
     // If a node is found, return the field value.
