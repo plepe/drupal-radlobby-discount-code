@@ -3,6 +3,7 @@
 namespace Drupal\radlobby_discount_code\Twig;
 
 use Drupal\node\Entity\Node;
+use Drupal\Core\Entity\Query\QueryInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -38,21 +39,22 @@ class RadlobbyDiscountCodeTwigExtension extends AbstractExtension {
     // If field_zeitraum is a field with date only use 'Y-m-d', otherwise 'Y-m-d\TH:i:s'.
     $timestamp = date('Y-m-d', $created);
 
-    // Load nodes with the given title.
-    $nodes = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
-      'title' => $title,
-      'type' => 'discount_code', // Filter by content type 'discount_code'
-      'status' => true, // Only published content
-    ]);
+    // Create query for nodes.
+    $query = \Drupal::entityQuery('node')
+      ->accessCheck(FALSE)
+      ->condition('title', $title) // Discount Code
+      ->condition('type', 'discount_code') // Filter by content type 'discount_code'
+      ->condition('status', true) // Only published content
+      ->condition('field_zeitraum.value', $timestamp, '<=') // check if timestamp is between field_zeitraum
+      ->condition('field_zeitraum.end_value', $timestamp, '>=') // see above
+    ;
 
-    // search for a node where the timestamp is between start/end of field_zeitraum (which is a datetime range field)
-    foreach ($nodes as $node) {
-      $values = $node->get('field_zeitraum')->getValue();
-      foreach ($values as $value) {
-        if ($value['value'] <= $timestamp && $timestamp <= $value['end_value']) {
-          return $node->id();
-        }
-      }
+    // Execute the query and get the result.
+    $nids = $query->execute();
+
+    // Return first found node id.
+    if (sizeof($nids)) {
+      return array_values($nids)[0];
     }
 
     return NULL; // Return NULL if no node or field found.
