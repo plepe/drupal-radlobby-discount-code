@@ -16,8 +16,35 @@ class RadlobbyDiscountCodeTwigExtension extends AbstractExtension {
    */
   public function getFunctions() {
     return [
+      new TwigFunction('radlobby_discount_code_get', [$this, 'getDiscountCode']),
       new TwigFunction('radlobby_discount_code_value', [$this, 'getDiscountCodeValue']),
     ];
+  }
+
+  /**
+   * Retrieves the Node ID of a valid discount code for the specified input.
+   *
+   * @param string $title
+   *   The title of the discount code (which matches the title of the Node).
+   *
+   * @return int|null
+   *   The Node ID of a valid discount code or null.
+   */
+  public function getDiscountCode(string $title) {
+    // Load nodes with the given title.
+    $nodes = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
+      'title' => $title,
+      'type' => 'discount_code', // Filter by content type 'discount_code'
+    ]);
+
+    // If a node is found, return the field value.
+    if (!empty($nodes)) {
+      /** @var \Drupal\node\Entity\Node $node */
+      $node = reset($nodes);
+      return $node->id();
+    }
+
+    return NULL; // Return NULL if no node or field found.
   }
 
   /**
