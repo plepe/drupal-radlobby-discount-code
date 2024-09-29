@@ -37,6 +37,11 @@ class RadlobbyDiscountCodeTwigExtension extends AbstractExtension {
    *   The Node ID of a valid discount code or null.
    */
   public function getDiscountCode($title, $created, $bundesland) {
+    // Empty discount code or bundesland? Don't even try ...
+    if (!$title || !$bundesland) {
+      return NULL;
+    }
+
     // convert 'created' to RFC8601 value.
     // If field_zeitraum is a field with date only use 'Y-m-d', otherwise 'Y-m-d\TH:i:s'.
     $timestamp = date('Y-m-d', $created);
